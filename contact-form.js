@@ -5,7 +5,7 @@
  * Sends name, email, and message to Google Apps Script.
  ************************************************************/
 
-const ADISHA_CONTACT_BACKEND_URL = "https://script.google.com/macros/s/AKfycbwxjxicrzIANZrR9nxOXAUUx1V-r73K1g70ZrVkYz0sUtqLw62tonmCdDI7Naw7T3S-DA/exec";
+const ADISHA_CONTACT_BACKEND_URL = "https://script.google.com/macros/s/AKfycbxj7HkSCg_e4vursbrbiR7QE9CZ3N_2Hf2m-IPpJxqRI2I6R0l4qsRQe-IaRPQlNIsi/exec";
 
 function handleFooterContactSubmit(event) {
   event.preventDefault();
