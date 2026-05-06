@@ -1,209 +1,162 @@
 /************************************************************
- * ADISHA Footer Contact Form Handler
+ * ADISHA Trust Foundation Contact Form Frontend
  * ----------------------------------------------------------
- * Works with:
- * GitHub Pages frontend
- * Google Apps Script backend
- *
- * Important:
- * The Web App URL below must be the current Apps Script
- * deployment URL from:
- * Apps Script → Deploy → Manage deployments → Web app URL
+ * GitHub Pages website → Google Apps Script
  ************************************************************/
 
-const ADISHA_CONTACT_BACKEND_URL =
-  "https://script.google.com/macros/s/AKfycbyhL9ODuq1UpMN-4VoQzQUxQ04FCo4UtN0Sm6z-Wdi6y3mRIeIvneA9vJKR0ELM-kbk5A/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhL9ODuq1UpMN-4VoQzQUxQ04FCo4UtN0Sm6z-Wdi6y3mRIeIvneA9vJKR0ELM-kbk5A/exec";
 
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("#contactForm");
 
-/************************************************************
- * BASIC EMAIL VALIDATION
- ************************************************************/
-
-function isValidFooterEmail(email) {
-  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return pattern.test(email);
-}
-
-
-/************************************************************
- * STATUS MESSAGE
- ************************************************************/
-
-function showFooterFormStatus(statusElement, message, success) {
-  if (!statusElement) {
+  if (!form) {
     return;
   }
 
-  statusElement.textContent = message;
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-  if (success) {
-    statusElement.classList.remove("is-error");
-    statusElement.classList.add("is-success");
-  } else {
-    statusElement.classList.remove("is-success");
-    statusElement.classList.add("is-error");
-  }
-}
+    const submitButton = form.querySelector("button[type='submit']");
+    const statusMessage = document.querySelector("#formStatus");
 
+    const name = form.querySelector("[name='name']")?.value.trim() || "";
+    const email = form.querySelector("[name='email']")?.value.trim() || "";
+    const message = form.querySelector("[name='message']")?.value.trim() || "";
 
-/************************************************************
- * RESET CHARACTER COUNT
- ************************************************************/
-
-function resetFooterMessageCount(form) {
-  const count = form.querySelector(".footer-message-count");
-
-  if (count) {
-    count.textContent = "0";
-  }
-}
-
-
-/************************************************************
- * SUBMIT HANDLER
- ************************************************************/
-
-function handleFooterContactSubmit(event) {
-  event.preventDefault();
-
-  const form = event.target;
-
-  const status = form.querySelector(".footer-form-status");
-  const submitButton = form.querySelector("button[type='submit']");
-
-  const nameInput = form.querySelector('input[name="contact_name"]');
-  const emailInput = form.querySelector('input[name="contact_email"]');
-  const messageInput = form.querySelector('textarea[name="contact_message"]');
-
-  const name = nameInput ? nameInput.value.trim() : "";
-  const email = emailInput ? emailInput.value.trim() : "";
-  const message = messageInput ? messageInput.value.trim() : "";
-
-  if (!name || name.length < 2) {
-    showFooterFormStatus(status, "Please enter your name.", false);
-    return;
-  }
-
-  if (!isValidFooterEmail(email)) {
-    showFooterFormStatus(status, "Please enter a valid email address.", false);
-    return;
-  }
-
-  if (!message || message.length < 5) {
-    showFooterFormStatus(status, "Please enter a short message.", false);
-    return;
-  }
-
-  if (message.length > 500) {
-    showFooterFormStatus(status, "Please keep your message under 500 characters.", false);
-    return;
-  }
-
-  if (!ADISHA_CONTACT_BACKEND_URL || ADISHA_CONTACT_BACKEND_URL.indexOf("script.google.com") === -1) {
-    showFooterFormStatus(status, "Contact backend URL is missing.", false);
-    return;
-  }
-
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.textContent = "Sending...";
-  }
-
-  showFooterFormStatus(status, "Sending message...", true);
-
-  const payload = {
-    name: name,
-    email: email,
-    message: message,
-    source: window.location.href || "ADISHA website footer form",
-    submittedFrom: window.location.hostname || "Website"
-  };
-
-  /*
-    Apps Script often requires no-cors from GitHub Pages.
-    Because of no-cors, the browser cannot read the real Apps Script response.
-    Confirm delivery in Apps Script → Executions by looking for doPost.
-  */
-
-  fetch(ADISHA_CONTACT_BACKEND_URL, {
-    method: "POST",
-    mode: "no-cors",
-    cache: "no-store",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8"
-    },
-    body: JSON.stringify(payload)
-  })
-    .then(function () {
-      form.reset();
-      resetFooterMessageCount(form);
-      showFooterFormStatus(status, "Thank you for the message.", true);
-
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit";
-      }
-    })
-    .catch(function (error) {
-      console.error("ADISHA contact form error:", error);
-
-      showFooterFormStatus(
-        status,
-        "Unable to send message. Please try again or email us directly.",
-        false
-      );
-
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = "Submit";
-      }
-    });
-}
-
-
-/************************************************************
- * INITIALIZE FOOTER CONTACT FORM
- ************************************************************/
-
-function initializeFooterContactForms() {
-  const forms = document.querySelectorAll(".footer-contact-form");
-
-  if (!forms || forms.length === 0) {
-    console.warn("No .footer-contact-form found on this page.");
-    return;
-  }
-
-  forms.forEach(function (form) {
-    if (form.dataset.initialized === "true") {
+    if (!name || !email || !message) {
+      showStatus(statusMessage, "Please fill in all required fields.", "error");
       return;
     }
 
-    form.dataset.initialized = "true";
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending...";
+      }
 
-    const textarea = form.querySelector('textarea[name="contact_message"]');
-    const count = form.querySelector(".footer-message-count");
+      showStatus(statusMessage, "Sending your message...", "info");
 
-    if (textarea && count) {
-      count.textContent = textarea.value.length || "0";
+      const visitorInfo = await getVisitorInfo();
 
-      textarea.addEventListener("input", function () {
-        count.textContent = textarea.value.length;
+      const payload = {
+        name: name,
+        email: email,
+        message: message,
+        source: "ADISHA website contact form",
+
+        pageUrl: window.location.href,
+        browser: visitorInfo.browser,
+        deviceType: visitorInfo.deviceType,
+        screenSize: visitorInfo.screenSize,
+        language: visitorInfo.language,
+        timezone: visitorInfo.timezone,
+        ipAddress: visitorInfo.ipAddress
+      };
+
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(payload)
       });
+
+      form.reset();
+
+      showStatus(
+        statusMessage,
+        "Thank you. Your message has been submitted.",
+        "success"
+      );
+
+    } catch (error) {
+      console.error("Contact form error:", error);
+
+      showStatus(
+        statusMessage,
+        "Something went wrong. Please try again.",
+        "error"
+      );
+
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Send Message";
+      }
     }
-
-    form.addEventListener("submit", handleFooterContactSubmit);
   });
+});
 
-  console.log("ADISHA contact form initialized.");
+
+async function getVisitorInfo() {
+  const userAgent = navigator.userAgent || "";
+
+  let ipAddress = "Unavailable";
+
+  try {
+    const ipResponse = await fetch("https://api.ipify.org?format=json");
+    const ipData = await ipResponse.json();
+
+    if (ipData && ipData.ip) {
+      ipAddress = ipData.ip;
+    }
+  } catch (error) {
+    console.warn("IP lookup failed:", error);
+  }
+
+  return {
+    browser: detectBrowser(userAgent),
+    deviceType: detectDeviceType(userAgent),
+    screenSize: window.screen.width + "x" + window.screen.height,
+    language: navigator.language || "Unavailable",
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "Unavailable",
+    ipAddress: ipAddress
+  };
 }
 
 
-/************************************************************
- * RUN INIT
- ************************************************************/
+function detectBrowser(userAgent) {
+  if (userAgent.includes("Edg/")) {
+    return "Microsoft Edge";
+  }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initializeFooterContactForms);
-} else {
-  initializeFooterContactForms();
+  if (userAgent.includes("Chrome/") && !userAgent.includes("Edg/")) {
+    return "Google Chrome";
+  }
+
+  if (userAgent.includes("Safari/") && !userAgent.includes("Chrome/")) {
+    return "Safari";
+  }
+
+  if (userAgent.includes("Firefox/")) {
+    return "Firefox";
+  }
+
+  if (userAgent.includes("OPR/") || userAgent.includes("Opera/")) {
+    return "Opera";
+  }
+
+  return "Unknown Browser";
+}
+
+
+function detectDeviceType(userAgent) {
+  const mobilePattern = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+
+  if (mobilePattern.test(userAgent)) {
+    return "Mobile or Tablet";
+  }
+
+  return "Desktop";
+}
+
+
+function showStatus(element, message, type) {
+  if (!element) {
+    return;
+  }
+
+  element.textContent = message;
+  element.className = "form-status " + type;
 }
