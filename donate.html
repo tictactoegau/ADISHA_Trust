@@ -13,6 +13,380 @@
 
   <link rel="icon" type="image/png" href="assets/images/favicon.png" />
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .paypal-donate-page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: clamp(42px, 6vw, 72px) 20px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.85fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .paypal-panel,
+    .paypal-summary-card {
+      border: 1px solid rgba(82, 65, 41, 0.15);
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(213, 160, 51, 0.08), transparent 34%),
+        rgba(255, 252, 246, 0.94);
+      box-shadow: var(--soft-shadow);
+    }
+
+    .paypal-panel {
+      padding: clamp(24px, 4vw, 34px);
+    }
+
+    .paypal-step + .paypal-step {
+      margin-top: 30px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(82, 65, 41, 0.12);
+    }
+
+    .paypal-step h2 {
+      margin: 0 0 14px;
+      color: var(--green);
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .paypal-step-note {
+      margin: -6px 0 18px;
+      color: #5c695f;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .paypal-frequency-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .paypal-option-input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .paypal-option-card {
+      min-height: 74px;
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      border: 1px solid rgba(213, 160, 51, 0.36);
+      border-radius: 14px;
+      background: #fffaf1;
+      color: var(--green);
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 800;
+      text-align: center;
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .paypal-option-card span {
+      display: block;
+      margin-top: 4px;
+      color: #77806f;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .paypal-option-input:checked + .paypal-option-card {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #255b35, #476f2e);
+      box-shadow: 0 12px 24px rgba(23, 63, 42, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .paypal-option-input:checked + .paypal-option-card span {
+      color: rgba(255, 250, 241, 0.82);
+    }
+
+    .paypal-amount-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .paypal-amount-card {
+      min-height: 62px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(213, 160, 51, 0.36);
+      border-radius: 14px;
+      background: #fffaf1;
+      color: var(--green);
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .paypal-option-input:checked + .paypal-amount-card {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #c94c0b, #ef7518);
+      box-shadow: 0 12px 24px rgba(217, 95, 14, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .paypal-custom-amount {
+      margin-top: 12px;
+      display: grid;
+      gap: 7px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .paypal-custom-amount label {
+      color: #35423a;
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+
+    .paypal-custom-amount input {
+      width: 100%;
+      border: 1px solid rgba(82, 65, 41, 0.2);
+      border-radius: 12px;
+      background: #fffaf1;
+      color: var(--ink);
+      font: inherit;
+      font-size: 15px;
+      padding: 13px 14px;
+      outline: none;
+      transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .paypal-custom-amount input:focus {
+      border-color: rgba(213, 160, 51, 0.7);
+      box-shadow: 0 0 0 4px rgba(213, 160, 51, 0.12);
+    }
+
+    .paypal-program-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .paypal-program-card {
+      min-height: 88px;
+      padding: 12px 10px;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 7px;
+      border: 1px solid rgba(213, 160, 51, 0.34);
+      border-radius: 14px;
+      background: #fffaf1;
+      color: var(--green-2);
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      text-align: center;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .paypal-program-card i {
+      font-style: normal;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .paypal-option-input:checked + .paypal-program-card {
+      color: #fff;
+      border-color: transparent;
+      background: linear-gradient(135deg, #255b35, #476f2e);
+      box-shadow: 0 12px 24px rgba(23, 63, 42, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .paypal-actions {
+      margin-top: 28px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .paypal-button {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 12px;
+      color: #fff;
+      background: linear-gradient(135deg, #c94c0b, #ef7518);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 14px 26px rgba(217, 95, 14, 0.24);
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+    }
+
+    .paypal-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 32px rgba(217, 95, 14, 0.28);
+      filter: saturate(1.06);
+    }
+
+    .paypal-support-note {
+      margin: 0;
+      color: #6a736a;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .paypal-summary-card {
+      position: sticky;
+      top: 108px;
+      overflow: hidden;
+    }
+
+    .paypal-summary-image {
+      height: 178px;
+      background:
+        linear-gradient(180deg, rgba(15, 50, 31, 0.12), rgba(15, 50, 31, 0.62)),
+        url("assets/images/hero-home.png") center center / cover no-repeat;
+    }
+
+    .paypal-summary-body {
+      padding: 24px;
+    }
+
+    .paypal-summary-body h2 {
+      margin: 0 0 14px;
+      color: var(--green);
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .paypal-selected-box {
+      margin: 18px 0 0;
+      padding: 16px;
+      border: 1px solid rgba(213, 160, 51, 0.3);
+      border-radius: 16px;
+      background: rgba(246, 234, 215, 0.56);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .paypal-selected-box p {
+      margin: 0;
+      color: #3b473e;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .paypal-selected-box strong {
+      color: var(--green);
+    }
+
+    .paypal-impact-list {
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #344239;
+      font-size: 14.5px;
+      line-height: 1.45;
+    }
+
+    .paypal-impact-list li {
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .paypal-impact-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: var(--green-2);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .paypal-placeholder-warning {
+      margin: 14px 0 0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(217, 95, 14, 0.1);
+      color: #8a3d0f;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    @media (max-width: 1000px) {
+      .paypal-donate-page {
+        grid-template-columns: 1fr;
+      }
+
+      .paypal-summary-card {
+        position: relative;
+        top: auto;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .paypal-donate-page {
+        padding: 34px 16px 46px;
+      }
+
+      .paypal-frequency-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .paypal-amount-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .paypal-program-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .paypal-panel {
+        padding: 22px 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .paypal-amount-grid,
+      .paypal-program-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -67,110 +441,123 @@
       </div>
     </section>
 
-    <section class="donate-page" id="donation-form">
-      <form class="donation-panel" action="#" method="post">
-        <div class="panel-section">
-          <h2 class="section-label">Choose Contribution Type</h2>
+    <section class="paypal-donate-page" id="donation-form">
+      <form class="paypal-panel" id="paypalDonationForm">
+        <div class="paypal-step">
+          <h2>Choose Contribution Type</h2>
+          <p class="paypal-step-note">
+            Select a one-time contribution or monthly support. Monthly giving helps sustain ongoing seva programs.
+          </p>
 
-          <div class="toggle-group">
+          <div class="paypal-frequency-grid">
             <label>
-              <input class="option-input" type="radio" name="frequency" value="one-time" checked />
-              <span class="option-card">
+              <input class="paypal-option-input" type="radio" name="frequency" value="one-time" checked />
+              <span class="paypal-option-card">
                 One-Time Contribution
                 <span>Give once to support urgent seva projects</span>
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="frequency" value="monthly" />
-              <span class="option-card">
+              <input class="paypal-option-input" type="radio" name="frequency" value="monthly" />
+              <span class="paypal-option-card">
                 Monthly Contribution
-                <span>Sustain ongoing programs every month</span>
+                <span>Sustain programs every month</span>
               </span>
             </label>
           </div>
         </div>
 
-        <div class="panel-section">
-          <h2 class="section-label">Select Amount</h2>
-          <p class="section-note">Choose a suggested amount or enter your own contribution.</p>
+        <div class="paypal-step">
+          <h2>Select Amount</h2>
+          <p class="paypal-step-note">
+            Choose a suggested amount or enter your own amount before continuing to PayPal.
+          </p>
 
-          <div class="amount-grid">
+          <div class="paypal-amount-grid">
             <label>
-              <input class="option-input" type="radio" name="amount" value="25" />
-              <span class="amount-card">$25</span>
+              <input class="paypal-option-input" type="radio" name="amount" value="25" />
+              <span class="paypal-amount-card">$25</span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="amount" value="51" checked />
-              <span class="amount-card">$51</span>
+              <input class="paypal-option-input" type="radio" name="amount" value="51" checked />
+              <span class="paypal-amount-card">$51</span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="amount" value="108" />
-              <span class="amount-card">$108</span>
+              <input class="paypal-option-input" type="radio" name="amount" value="108" />
+              <span class="paypal-amount-card">$108</span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="amount" value="501" />
-              <span class="amount-card">$501</span>
+              <input class="paypal-option-input" type="radio" name="amount" value="501" />
+              <span class="paypal-amount-card">$501</span>
             </label>
           </div>
 
-          <div class="field custom-amount">
-            <label for="custom-amount">Custom Amount</label>
-            <input id="custom-amount" name="custom_amount" type="number" min="1" placeholder="Enter custom amount" />
+          <div class="paypal-custom-amount">
+            <label for="customAmount">Custom Amount</label>
+            <input
+              id="customAmount"
+              name="custom_amount"
+              type="number"
+              min="1"
+              placeholder="Enter custom amount"
+            />
           </div>
         </div>
 
-        <div class="panel-section">
-          <h2 class="section-label">Choose Program</h2>
-          <p class="section-note">Select where you would like your contribution to be directed.</p>
+        <div class="paypal-step">
+          <h2>Choose Program</h2>
+          <p class="paypal-step-note">
+            Select where you would like your contribution to be directed.
+          </p>
 
-          <div class="program-grid">
+          <div class="paypal-program-grid">
             <label>
-              <input class="option-input" type="radio" name="program" value="gau-seva" checked />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Gau Seva" checked />
+              <span class="paypal-program-card">
                 <i>🐄</i>
                 Gau Seva
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="program" value="kanya-shakti" />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Kanya Shakti" />
+              <span class="paypal-program-card">
                 <i>👧</i>
                 Kanya Shakti
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="program" value="sanskriti-mandir" />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Sanskriti Mandir" />
+              <span class="paypal-program-card">
                 <i>⛩</i>
                 Sanskriti Mandir
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="program" value="satya-seva" />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Satya Seva" />
+              <span class="paypal-program-card">
                 <i>👥</i>
                 Satya Seva
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="program" value="bhoomi-dharma" />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Bhoomi Dharma" />
+              <span class="paypal-program-card">
                 <i>🌿</i>
                 Bhoomi Dharma
               </span>
             </label>
 
             <label>
-              <input class="option-input" type="radio" name="program" value="yagyas" />
-              <span class="program-card">
+              <input class="paypal-option-input" type="radio" name="program" value="Yagyas" />
+              <span class="paypal-program-card">
                 <i>🔥</i>
                 Yagyas
               </span>
@@ -178,89 +565,54 @@
           </div>
         </div>
 
-        <div class="panel-section">
-          <h2 class="section-label">Donor Information</h2>
+        <div class="paypal-actions">
+          <button class="paypal-button" type="submit">
+            Continue to PayPal
+          </button>
 
-          <div class="field-grid">
-            <div class="field">
-              <label for="first-name">First Name</label>
-              <input id="first-name" name="first_name" type="text" placeholder="First name" />
-            </div>
+          <p class="paypal-support-note">
+            You will be redirected to PayPal to complete your contribution securely.
+          </p>
 
-            <div class="field">
-              <label for="last-name">Last Name</label>
-              <input id="last-name" name="last_name" type="text" placeholder="Last name" />
-            </div>
-
-            <div class="field">
-              <label for="email">Email Address</label>
-              <input id="email" name="email" type="email" placeholder="you@example.com" />
-            </div>
-
-            <div class="field">
-              <label for="phone">Phone Number</label>
-              <input id="phone" name="phone" type="tel" placeholder="Optional" />
-            </div>
-
-            <div class="field full">
-              <label for="message">Message or Dedication</label>
-              <textarea id="message" name="message" placeholder="Optional message"></textarea>
-            </div>
-          </div>
-
-          <label class="checkbox-row">
-            <input type="checkbox" name="anonymous" />
-            <span>Make this contribution anonymous.</span>
-          </label>
-
-          <label class="checkbox-row">
-            <input type="checkbox" name="updates" checked />
-            <span>I would like to receive updates about ADISHA Trust Foundation projects.</span>
-          </label>
-
-          <div class="submit-row">
-            <button class="btn btn-orange" type="button" id="continueDonationForm">
-              Continue Donation Form
-            </button>
-
-            <p class="secure-note">
-              This opens the official ADISHA donor information form with your selected details pre-filled.
-              Payment gateway will be connected later.
-            </p>
-          </div>
+          <p class="paypal-placeholder-warning" id="paypalPlaceholderWarning" hidden>
+            PayPal link is not connected yet. Replace the placeholder links inside this file.
+          </p>
         </div>
       </form>
 
-      <aside class="donation-summary">
-        <div class="summary-image"></div>
+      <aside class="paypal-summary-card">
+        <div class="paypal-summary-image"></div>
 
-        <div class="summary-body">
+        <div class="paypal-summary-body">
           <h2>Your Seva Creates Impact</h2>
 
-          <p>
+          <p style="margin:0;color:#566258;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.65;">
             Every contribution helps preserve living Vedic traditions while supporting
-            practical projects in education, ecology, cow protection, temple heritage,
-            and community upliftment.
+            education, ecology, cow protection, temple heritage, and community upliftment.
           </p>
 
-          <ul class="impact-list">
+          <div class="paypal-selected-box">
+            <p>
+              <strong>Selected:</strong><br />
+              <span id="selectedFrequency">One-Time Contribution</span><br />
+              <span id="selectedAmount">$51</span><br />
+              <span id="selectedProgram">Gau Seva</span>
+            </p>
+          </div>
+
+          <ul class="paypal-impact-list">
             <li>Support cow protection, shelter, nutrition, and medical care.</li>
             <li>Provide education and empowerment for young girls.</li>
             <li>Help protect sacred mandirs, rituals, and spiritual ecosystems.</li>
             <li>Strengthen rural sustainability and ecological restoration.</li>
             <li>Preserve Vedic Yagyas and ancestral dharmic traditions.</li>
           </ul>
-
-          <div class="summary-callout">
-            Contributions may be directed to a specific program or used where the need is
-            greatest across ADISHA Trust Foundation initiatives.
-          </div>
         </div>
       </aside>
     </section>
   </main>
 
-  <footer class="footer">
+  <footer class="footer" id="footer-contact">
     <div class="footer-inner footer-three-column">
       <div class="footer-col footer-brand-col">
         <a class="brand footer-logo" href="index.html" aria-label="ADISHA Trust Foundation home">
@@ -356,45 +708,59 @@
   </footer>
 
   <script>
-    const GOOGLE_FORM_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdPmvPrponlNtT4Fh1HliqZXWIwxkqHCqu3plI0OeZ2PN30Vg/viewform";
+    /*
+      Replace these placeholder links after creating PayPal links.
 
-    const GOOGLE_FORM_FIELDS = {
-      frequency: "entry.1118352290",
-      amount: "entry.724590284",
-      customAmount: "entry.1973220161",
-      program: "entry.1222638300",
-      firstName: "entry.1540301667",
-      lastName: "entry.1072850822",
-      email: "entry.352450937",
-      phone: "entry.801493758",
-      message: "entry.1842532553",
-      anonymous: "entry.1131239667",
-      updates: "entry.85167877"
-    };
+      Option A:
+      Use one PayPal donation link for both one-time and monthly.
 
-    function getCheckedValue(name) {
+      Option B:
+      Use separate PayPal links:
+      - one for one-time donation
+      - one for monthly subscription/contribution
+    */
+
+    const PAYPAL_ONE_TIME_LINK = "https://www.paypal.com/donate/?hosted_button_id=8T9EJ3S82WH7Y";
+    const PAYPAL_MONTHLY_LINK = "https://www.paypal.com/donate/?hosted_button_id=8T9EJ3S82WH7Y";
+
+    function getCheckedDonationValue(name) {
       const checked = document.querySelector(`input[name="${name}"]:checked`);
       return checked ? checked.value : "";
     }
 
-    function getInputValue(id) {
-      const input = document.getElementById(id);
-      return input ? input.value.trim() : "";
-    }
+    function getSelectedAmount() {
+      const customAmount = document.getElementById("customAmount").value.trim();
 
-    function setRadioValue(name, value) {
-      const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
-      if (input) input.checked = true;
+      if (customAmount && Number(customAmount) > 0) {
+        return customAmount;
+      }
+
+      return getCheckedDonationValue("amount");
     }
 
     function formatFrequency(value) {
-      if (value === "one-time") return "One-Time Contribution";
-      if (value === "monthly") return "Monthly Contribution";
-      return value;
+      return value === "monthly" ? "Monthly Contribution" : "One-Time Contribution";
     }
 
-    function formatProgram(value) {
-      const programs = {
+    function updateDonationSummary() {
+      const frequency = getCheckedDonationValue("frequency");
+      const amount = getSelectedAmount();
+      const program = getCheckedDonationValue("program");
+
+      document.getElementById("selectedFrequency").textContent = formatFrequency(frequency);
+      document.getElementById("selectedAmount").textContent = amount ? "$" + amount : "Custom Amount";
+      document.getElementById("selectedProgram").textContent = program || "Gau Seva";
+    }
+
+    function applyProgramFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const program = params.get("program");
+
+      if (!program) {
+        return;
+      }
+
+      const normalizedPrograms = {
         "gau-seva": "Gau Seva",
         "kanya-shakti": "Kanya Shakti",
         "sanskriti-mandir": "Sanskriti Mandir",
@@ -403,65 +769,69 @@
         "yagyas": "Yagyas"
       };
 
-      return programs[value] || value;
+      const programValue = normalizedPrograms[program] || program;
+      const input = document.querySelector(`input[name="program"][value="${programValue}"]`);
+
+      if (input) {
+        input.checked = true;
+      }
     }
 
-    function applyProgramFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const program = params.get("program");
+    function buildPayPalUrl(baseUrl, amount, program, frequency) {
+      const isPlaceholder = baseUrl.indexOf("YOUR_") !== -1;
 
-      if (program) {
-        setRadioValue("program", program);
+      if (isPlaceholder) {
+        return baseUrl;
       }
+
+      /*
+        This preserves compatibility with simple PayPal hosted donation links.
+        If PayPal ignores these query values, the donation link still opens normally.
+      */
+
+      const url = new URL(baseUrl);
+      url.searchParams.set("amount", amount);
+      url.searchParams.set("item_name", "ADISHA Trust Foundation - " + program + " - " + formatFrequency(frequency));
+      return url.toString();
     }
 
     document.addEventListener("DOMContentLoaded", function () {
       applyProgramFromUrl();
+      updateDonationSummary();
 
-      const continueButton = document.getElementById("continueDonationForm");
+      const donationForm = document.getElementById("paypalDonationForm");
+      const warning = document.getElementById("paypalPlaceholderWarning");
 
-      continueButton.addEventListener("click", function () {
-        const frequency = formatFrequency(getCheckedValue("frequency"));
-        const selectedAmount = getCheckedValue("amount");
-        const customAmount = getInputValue("custom-amount");
-        const program = formatProgram(getCheckedValue("program"));
+      document.querySelectorAll('input[name="frequency"], input[name="amount"], input[name="program"]').forEach(function (input) {
+        input.addEventListener("change", updateDonationSummary);
+      });
 
-        const firstName = getInputValue("first-name");
-        const lastName = getInputValue("last-name");
-        const email = getInputValue("email");
-        const phone = getInputValue("phone");
-        const message = getInputValue("message");
+      document.getElementById("customAmount").addEventListener("input", updateDonationSummary);
 
-        const anonymous = document.querySelector('input[name="anonymous"]')?.checked ? "Yes" : "No";
-        const updates = document.querySelector('input[name="updates"]')?.checked ? "Yes" : "No";
+      donationForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-        const params = new URLSearchParams();
+        const frequency = getCheckedDonationValue("frequency");
+        const amount = getSelectedAmount();
+        const program = getCheckedDonationValue("program");
 
-        params.set("usp", "pp_url");
-        params.set(GOOGLE_FORM_FIELDS.frequency, frequency);
-        params.set(GOOGLE_FORM_FIELDS.amount, selectedAmount);
-        params.set(GOOGLE_FORM_FIELDS.customAmount, customAmount);
-        params.set(GOOGLE_FORM_FIELDS.program, program);
-        params.set(GOOGLE_FORM_FIELDS.firstName, firstName);
-        params.set(GOOGLE_FORM_FIELDS.lastName, lastName);
-        params.set(GOOGLE_FORM_FIELDS.email, email);
-        params.set(GOOGLE_FORM_FIELDS.phone, phone);
-        params.set(GOOGLE_FORM_FIELDS.message, message);
-        params.set(GOOGLE_FORM_FIELDS.anonymous, anonymous);
-        params.set(GOOGLE_FORM_FIELDS.updates, updates);
-
-        const finalUrl = `${GOOGLE_FORM_BASE_URL}?${params.toString()}`;
-
-        window.open(finalUrl, "_blank", "noopener,noreferrer");
-
-        const donationForm = document.querySelector(".donation-panel");
-        if (donationForm) {
-          donationForm.reset();
+        if (!amount || Number(amount) <= 0) {
+          alert("Please select or enter a donation amount.");
+          return;
         }
 
-        setRadioValue("frequency", "one-time");
-        setRadioValue("amount", "51");
-        setRadioValue("program", "gau-seva");
+        const basePayPalUrl = frequency === "monthly" ? PAYPAL_MONTHLY_LINK : PAYPAL_ONE_TIME_LINK;
+        const isPlaceholder = basePayPalUrl.indexOf("YOUR_") !== -1;
+
+        if (isPlaceholder) {
+          warning.hidden = false;
+          return;
+        }
+
+        warning.hidden = true;
+
+        const finalPayPalUrl = buildPayPalUrl(basePayPalUrl, amount, program, frequency);
+        window.location.href = finalPayPalUrl;
       });
     });
   </script>
